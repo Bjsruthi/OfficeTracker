@@ -9,10 +9,12 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "icon.svg",
+      "src": "./icon.svg",
       "sizes": "any",
       "type": "image/svg+xml"
     }
   ],
-  "categories": ["productivity"]
+  "categories": [
+    "productivity"
+  ]
 }
