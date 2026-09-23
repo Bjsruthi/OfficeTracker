@@ -1,0 +1,34 @@
+{
+  "name": "office-calendar",
+  "version": "1.0.0",
+  "description": "A beautiful calendar app to track your office days with dark theme and purple highlighting",
+  "main": "index.html",
+  "scripts": {
+    "start": "http-server -p 8000 -o",
+    "serve": "http-server -p 8000",
+    "build": "echo 'This is a static site, no build required'",
+    "test": "echo 'Add tests here'"
+  },
+  "keywords": [
+    "calendar",
+    "office",
+    "pwa",
+    "progressive-web-app",
+    "tracker",
+    "dark-theme",
+    "offline"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/office-calendar.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/office-calendar/issues"
+  },
+  "homepage": "https://github.com/yourusername/office-calendar#readme"
+}

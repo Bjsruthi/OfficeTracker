@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#8b5cf6">
+    <meta name="description" content="A beautiful calendar app to track your office days with dark theme and purple highlighting">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Office Calendar">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link rel="manifest" href="manifest.json">
+    <title>Office Days Calendar</title>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/react.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/react-dom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        #root {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .calendar-container {
+            background: #0f3460;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            padding: 2rem;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+
+        .calendar-header button {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            color: #a78bfa;
+        }
+
+        .calendar-header button:hover {
+            background-color: rgba(139, 92, 246, 0.2);
+            border-color: rgba(139, 92, 246, 0.5);
+            transform: scale(1.05);
+        }
+
+        .calendar-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #e0d5ff;
+            text-align: center;
+            flex: 1;
+            letter-spacing: 0.5px;
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(168, 85, 247, 0.1) 100%);
+            border-radius: 12px;
+            padding: 1.2rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .stats-label {
+            font-size: 13px;
+            color: #a78bfa;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .stats-value {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #a78bfa 0%, #d8b4fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .weekday-header {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #a78bfa;
+            padding: 12px 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .day-cell {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: #cbd5e1;
+            background: rgba(51, 65, 85, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            gap: 3px;
+            user-select: none;
+        }
+
+        .day-cell:hover {
+            border-color: rgba(168, 85, 247, 0.5);
+            background: rgba(139, 92, 246, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(168, 85, 247, 0.2);
+        }
+
+        .day-cell.office-day {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.6) 0%, rgba(147, 51, 234, 0.5) 100%);
+            border-color: rgba(168, 85, 247, 0.8);
+            color: #f3e8ff;
+            font-weight: 700;
+            box-shadow: 0 8px 16px rgba(168, 85, 247, 0.3);
+        }
+
+        .day-cell.office-day:hover {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.8) 0%, rgba(147, 51, 234, 0.7) 100%);
+            border-color: rgba(168, 85, 247, 1);
+            box-shadow: 0 12px 24px rgba(168, 85, 247, 0.4);
+            transform: translateY(-3px);
+        }
+
+        .day-cell.empty {
+            border: none;
+            cursor: default;
+            background: transparent;
+        }
+
+        .day-cell.empty:hover {
+            background: transparent;
+            border: none;
+            transform: none;
+        }
+
+        .emoji {
+            font-size: 18px;
+            line-height: 1;
+            animation: pulse 0.6s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .instruction {
+            text-align: center;
+            font-size: 13px;
+            color: #a78bfa;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #64748b;
+            border-top: 1px solid rgba(139, 92, 246, 0.2);
+            padding-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const OfficeCalendar = () => {
+            const [currentDate, setCurrentDate] = React.useState(new Date());
+            const [officeDays, setOfficeDays] = React.useState(() => {
+                try {
+                    const saved = localStorage.getItem('officeDays');
+                    return saved ? JSON.parse(saved) : {};
+                } catch {
+                    return {};
+                }
+            });
+
+            // Save to localStorage whenever officeDays changes
+            React.useEffect(() => {
+                try {
+                    localStorage.setItem('officeDays', JSON.stringify(officeDays));
+                } catch {
+                    console.log('Could not save to storage');
+                }
+            }, [officeDays]);
+
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+
+            // Calculate days in the month
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDayOfWeek = firstDay.getDay();
+
+            // Create array of days with empty slots for previous month
+            const days = [];
+            for (let i = 0; i < startingDayOfWeek; i++) {
+                days.push(null);
+            }
+            for (let i = 1; i <= daysInMonth; i++) {
+                days.push(i);
+            }
+
+            // Toggle office day marking
+            const toggleOfficeDay = (day) => {
+                const key = `${year}-${month}-${day}`;
+                setOfficeDays(prev => {
+                    const updated = { ...prev };
+                    if (updated[key]) {
+                        delete updated[key];
+                    } else {
+                        updated[key] = true;
+                    }
+                    return updated;
+                });
+            };
+
+            // Check if a day is marked as office day
+            const isOfficeDay = (day) => {
+                const key = `${year}-${month}-${day}`;
+                return officeDays[key];
+            };
+
+            // Count office days in current month
+            const officeCount = Object.keys(officeDays).filter(key => {
+                const [y, m] = key.split('-');
+                return parseInt(y) === year && parseInt(m) === month;
+            }).length;
+
+            // Navigation
+            const prevMonth = () => {
+                setCurrentDate(new Date(year, month - 1, 1));
+            };
+
+            const nextMonth = () => {
+                setCurrentDate(new Date(year, month + 1, 1));
+            };
+
+            // Format month name
+            const monthName = new Date(year, month, 1).toLocaleString('default', { month: 'long' });
+            const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+            return (
+                <div className="calendar-container">
+                    <div className="instruction">
+                        📅 Double-click any day to mark it as an office day
+                    </div>
+
+                    <div className="calendar-header">
+                        <button onClick={prevMonth} title="Previous month">←</button>
+                        <h2>{monthName} {year}</h2>
+                        <button onClick={nextMonth} title="Next month">→</button>
+                    </div>
+
+                    <div className="stats-card">
+                        <div className="stats-label">Office days this month</div>
+                        <div className="stats-value">{officeCount}</div>
+                    </div>
+
+                    <div className="calendar-grid">
+                        {/* Weekday headers */}
+                        {weekDays.map(day => (
+                            <div key={day} className="weekday-header">
+                                {day}
+                            </div>
+                        ))}
+
+                        {/* Day cells */}
+                        {days.map((day, index) => (
+                            <div
+                                key={index}
+                                className={`day-cell ${!day ? 'empty' : ''} ${isOfficeDay(day) ? 'office-day' : ''}`}
+                                onDoubleClick={() => day && toggleOfficeDay(day)}
+                                title={day ? `${day} ${monthName}` : ''}
+                            >
+                                {day && (
+                                    <>
+                                        <span>{day}</span>
+                                        {isOfficeDay(day) && <span className="emoji">🏢</span>}
+                                    </>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="footer">
+                        Your office days are saved automatically in your browser
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<OfficeCalendar />, document.getElementById('root'));
+    </script>
+
+    <script>
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(registration => {
+                    console.log('Service Worker registered:', registration);
+                })
+                .catch(error => {
+                    console.log('Service Worker registration failed:', error);
+                });
+        }
+
+        // Handle install prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', e => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // Show install button if needed
+            const installBtn = document.getElementById('install-btn');
+            if (installBtn) {
+                installBtn.style.display = 'block';
+                installBtn.addEventListener('click', () => {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then(choiceResult => {
+                        if (choiceResult.outcome === 'accepted') {
+                            console.log('App installed');
+                        }
+                        deferredPrompt = null;
+                    });
+                });
+            }
+        });
+
+        // App installed event
+        window.addEventListener('appinstalled', () => {
+            console.log('Office Calendar app was installed');
+            deferredPrompt = null;
+        });
+    </script>
+</body>
+</html>
